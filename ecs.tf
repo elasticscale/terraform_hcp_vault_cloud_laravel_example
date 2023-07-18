@@ -1,3 +1,5 @@
+
+
 module "ecs" {
   source       = "terraform-aws-modules/ecs/aws"
   cluster_name = "${var.prefix}cluster"
@@ -9,7 +11,7 @@ module "ecs" {
     }
   }
   services = {
-    ecsdemo-frontend = {
+    "${var.prefix}laravel" = {
       cpu    = 1024
       memory = 4096
       container_definitions = {
@@ -26,6 +28,7 @@ module "ecs" {
             }
           ]
           enable_cloudwatch_logging = true
+
         }
       }
       load_balancer = {
@@ -55,4 +58,10 @@ module "ecs" {
       }
     }
   }
+}
+
+resource "aws_iam_role_policy" "ecs_exec_policy" {
+  name   = "${var.prefix}ecs-exec-policy"
+  role   = module.ecs.services["${var.prefix}laravel"]["tasks_iam_role_name"]
+  policy = file("${path.module}/ecs-exec-policy.json")
 }
