@@ -51,21 +51,20 @@ module "ecs" {
       memory = 4096
       container_definitions = {
         "${var.prefix}laravel" = {
-          cpu       = 512
-          memory    = 1024
-          essential = true
-          image     = "nginx:latest"
+          readonly_root_filesystem = false
+          cpu                      = 512
+          memory                   = 1024
+          essential                = true
+          image                    = "httpd:latest"
           port_mappings = [
             {
               containerPort = 80
               protocol      = "tcp"
             }
           ]
-          enable_cloudwatch_logging = false
+          enable_cloudwatch_logging = true
         }
       }
-
-
       load_balancer = {
         service = {
           target_group_arn = module.alb.target_group_arns[0]
@@ -73,7 +72,6 @@ module "ecs" {
           container_port   = 80
         }
       }
-
       subnet_ids = module.vpc.private_subnets
       security_group_rules = {
         alb_ingress_3000 = {
