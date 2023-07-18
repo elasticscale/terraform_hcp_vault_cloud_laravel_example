@@ -4,8 +4,8 @@ resource "aws_eip" "nat" {
 }
 
 module "vpc" {
-  source  = "terraform-aws-modules/vpc/aws"
-  version = "5.1.0"
+  source              = "terraform-aws-modules/vpc/aws"
+  version             = "5.1.0"
   name                = "${var.prefix}vpc"
   cidr                = "10.0.0.0/16"
   azs                 = ["${var.region}a", "${var.region}b", "${var.region}c"]
