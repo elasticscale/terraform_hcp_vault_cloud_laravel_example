@@ -9,3 +9,9 @@ variable "prefix" {
   description = "Prefix to use for all resources"
   type        = string
 }
+
+variable "image_url" {
+  default     = "httpd:latest"
+  description = "Image URL to use for the container"
+  type        = string
+}
