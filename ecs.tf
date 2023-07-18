@@ -31,6 +31,7 @@ module "ecs" {
 
         }
       }
+
       load_balancer = {
         service = {
           target_group_arn = module.alb.target_group_arns[0]
@@ -38,7 +39,8 @@ module "ecs" {
           container_port   = 80
         }
       }
-      subnet_ids = module.vpc.private_subnets
+      enable_execute_command = true
+      subnet_ids             = module.vpc.private_subnets
       security_group_rules = {
         alb_ingress_3000 = {
           type                     = "ingress"
@@ -60,6 +62,7 @@ module "ecs" {
   }
 }
 
+// todo change to task_exec_iam_statements
 resource "aws_iam_role_policy" "ecs_exec_policy" {
   name   = "${var.prefix}ecs-exec-policy"
   role   = module.ecs.services["${var.prefix}laravel"]["tasks_iam_role_name"]
