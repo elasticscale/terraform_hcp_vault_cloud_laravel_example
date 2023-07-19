@@ -13,6 +13,9 @@ module "aurora_mysql_v2" {
     vpc_ingress = {
       cidr_blocks = module.vpc.private_subnets_cidr_blocks
     }
+    hcp_ingress = {
+      cidr_blocks = [hcp_hvn.hvn.cidr_block]
+    }
   }
   monitoring_interval = 60
   apply_immediately   = true
