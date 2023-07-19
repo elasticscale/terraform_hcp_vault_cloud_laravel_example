@@ -52,4 +52,18 @@ $app->singleton(
 |
 */
 
+$envPath = getenv('ENVPATH');
+if($envPath) {
+    $timeout = 60;
+    while (!file_exists($envPath . '/.env')) {
+        sleep(10);
+        $timeout -= 10;
+        if($timeout <= 0) {
+            echo ".env file not found in $envPath";
+            break;
+        }
+    }
+    $app->useEnvironmentPath($envPath);
+}
+
 return $app;

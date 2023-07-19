@@ -38,12 +38,17 @@ module "ecs" {
               containerPath = "/etc/vault"
             }
           ]
+          environment = [
+            {
+              name  = "ENVPATH"
+              value = "/etc/vault/"
+            }
+          ]
         }
         "${var.prefix}vault" = {
           readonly_root_filesystem  = false
           essential                 = true
           image                     = "${aws_ecr_repository.vault.repository_url}:latest"
-          essential                 = false
           enable_cloudwatch_logging = true
           command                   = ["vault", "agent", "-log-level", "debug", "-config=/etc/vault/vault-agent.hcl"]
           dependsOn = [
