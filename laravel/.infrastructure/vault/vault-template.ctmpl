@@ -1,0 +1,17 @@
+{{ with secret "secret/dynamic/laravel" }}
+APP_NAME={{ .Data.data.app_name }}
+APP_ENV={{ .Data.data.app_env }}
+APP_KEY={{ .Data.data.app_key }}
+APP_DEBUG={{ .Data.data.app_debug }}
+APP_URL={{ .Data.data.app_url }}
+{{ end }}
+DB_CONNECTION=mysql
+{{ with secret "secret/dynamic/mysql" }}
+DB_HOST='{{.Data.data.hostname}}'
+DB_PORT={{.Data.data.port}}
+DB_DATABASE={{.Data.data.database}}
+{{ end }}
+{{ with secret "database/creds/laravel" }}
+DB_USERNAME={{ .Data.username }}
+DB_PASSWORD='{{ .Data.password }}'
+{{ end }}

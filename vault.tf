@@ -1,4 +1,3 @@
-# build the secrets key pair store
 resource "vault_mount" "generic" {
   count       = var.vault_url != "" ? 1 : 0
   path        = "secret"
@@ -50,13 +49,10 @@ resource "vault_database_secret_backend_connection" "mysql_connection" {
   allowed_roles     = local.roles
   mysql_aurora {
     connection_url = "{{username}}:{{password}}@tcp(${module.aurora_mysql_v2.cluster_endpoint}:${module.aurora_mysql_v2.cluster_port})/${module.aurora_mysql_v2.cluster_database_name}"
-  }
-  data = {
-    username = module.aurora_mysql_v2.cluster_master_username
-    password = module.aurora_mysql_v2.cluster_master_password
+    username       = module.aurora_mysql_v2.cluster_master_username
+    password       = module.aurora_mysql_v2.cluster_master_password
   }
 }
-
 resource "vault_database_secret_backend_role" "mysql_roles" {
   for_each            = toset(local.roles)
   default_ttl         = 86350
@@ -67,12 +63,12 @@ resource "vault_database_secret_backend_role" "mysql_roles" {
   creation_statements = ["CREATE USER '{{name}}'@'%' IDENTIFIED BY '{{password}}';GRANT ALL ON ${module.aurora_mysql_v2.cluster_database_name}.* TO '{{name}}'@'%' WITH GRANT OPTION;"]
 }
 
-# rotate rds credentials so the mysql credentials in the state are not correct anymore
-# resource "vault_generic_endpoint" "rotate_initial_db_password_mysql" {
-#   count          = var.vault_url != "" ? 1 : 0
-#   depends_on     = [vault_database_secret_backend_connection.mysql_connection]
-#   path           = "database/rotate-root/${vault_database_secret_backend_connection.mysql_connection.name}"
-#   disable_read   = true
-#   disable_delete = true
-#   data_json      = "{}"
-# }
+# rotate rds credentials, so the password for the root user is stored in vault instead of the statefile
+resource "vault_generic_endpoint" "rotate_initial_db_password_mysql" {
+  count          = var.vault_url != "" ? 1 : 0
+  depends_on     = [vault_database_secret_backend_connection.mysql_connection[0]]
+  path           = "database/rotate-root/${vault_database_secret_backend_connection.mysql_connection[0].name}"
+  disable_read   = true
+  disable_delete = true
+  data_json      = "{}"
+}

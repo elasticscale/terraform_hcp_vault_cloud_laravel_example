@@ -23,7 +23,7 @@ module "ecs" {
           image                    = var.image_url
           port_mappings = [
             {
-              containerPort = 80
+              containerPort = 8080
               protocol      = "tcp"
             }
           ]
@@ -36,7 +36,7 @@ module "ecs" {
         service = {
           target_group_arn = module.alb.target_group_arns[0]
           container_name   = "${var.prefix}laravel"
-          container_port   = 80
+          container_port   = 8080
         }
       }
       enable_execute_command = true
