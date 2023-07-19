@@ -27,9 +27,9 @@ module "alb" {
   ]
   target_groups = [
     {
-      name             = "${var.prefix}laravel"
+      name             = "${var.prefix}web"
       backend_protocol = "HTTP"
-      backend_port     = "80"
+      backend_port     = "8080"
       target_type      = "ip"
       health_check = {
         enabled = true

@@ -44,8 +44,8 @@ module "ecs" {
       security_group_rules = {
         alb_ingress_3000 = {
           type                     = "ingress"
-          from_port                = 80
-          to_port                  = 80
+          from_port                = 8080
+          to_port                  = 8080
           protocol                 = "tcp"
           description              = "Laravel port"
           source_security_group_id = module.alb_sg.security_group_id

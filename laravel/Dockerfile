@@ -5,7 +5,7 @@ COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr
 RUN install-php-extensions gd pdo_mysql zip intl soap pcntl bcmath calendar mysqli opcache sockets apcu
 
 # set webroot
-ENV APACHE_DOCUMENT_ROOT /var/app/web
+ENV APACHE_DOCUMENT_ROOT /var/app/public
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf && sed -ri 's|80|8080|g' /etc/apache2/sites-available/*.conf
 RUN sed -ri 's|80|8080|g' /etc/apache2/ports.conf
 RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
@@ -48,19 +48,19 @@ RUN echo "opcache.jit=tracing" >> $PHP_INI_DIR/conf.d/opcache.ini
 RUN echo "opcache.jit_buffer_size=100M" >> $PHP_INI_DIR/conf.d/opcache.ini
 
 # add the non priviliged user
-RUN groupadd -g 1000 appuser && useradd -r -u 1000 -g appuser appuser
+# RUN groupadd -g 1000 appuser && useradd -r -u 1000 -g appuser appuser
 
 # www data owns this stuff below and can run apache, provided we fix the port
-RUN chown -R appuser:appuser /var/app && chown -R appuser:appuser /etc/vault
+# RUN chown -R appuser:appuser /var/app && chown -R appuser:appuser /etc/vault && chown -R appuser:appuser /var/run/apache2/
 
-# run it as user www-data and not root
-USER appuser
+# run it as user www-data and not root (todo)
+# USER appuser
 
 # install composer dependencies
 RUN cd /var/app && composer install -n --prefer-dist --optimize-autoloader --no-scripts --apcu-autoloader
 
-# set permissions
-RUN chmod 777 /var/app/storage
+# set permissions (todo), storage probably, but fix apache2 root issue
+RUN chmod -R 777 /var/app
 
 #  run on 8080 for no root
 EXPOSE 8080
