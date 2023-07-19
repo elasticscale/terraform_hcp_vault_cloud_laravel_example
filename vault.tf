@@ -30,6 +30,27 @@ resource "vault_generic_secret" "laravel" {
 EOT
 }
 
+resource "vault_generic_secret" "db" {
+  count = var.vault_url != "" ? 1 : 0
+  depends_on = [
+    vault_mount.generic
+  ]
+  path         = "secret/dynamic/mysql"
+  disable_read = true
+  lifecycle {
+    ignore_changes = [
+      data_json
+    ]
+  }
+  data_json = <<EOT
+{
+  "hostname":   "${module.aurora_mysql_v2.cluster_endpoint}",
+  "port":   "${module.aurora_mysql_v2.cluster_port}",
+  "database":   "${module.aurora_mysql_v2.cluster_database_name}"
+}
+EOT
+}
+
 // mysql mount
 
 resource "vault_mount" "rds" {

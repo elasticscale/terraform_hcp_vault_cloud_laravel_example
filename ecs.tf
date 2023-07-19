@@ -2,6 +2,7 @@
 
 module "ecs" {
   source       = "terraform-aws-modules/ecs/aws"
+  version      = "5.2.0"
   cluster_name = "${var.prefix}cluster"
   fargate_capacity_providers = {
     FARGATE = {
@@ -10,15 +11,17 @@ module "ecs" {
       }
     }
   }
+
   services = {
     "${var.prefix}laravel" = {
       cpu    = 1024
       memory = 4096
+      volume = [
+        { name = "vault-volume" }
+      ]
       container_definitions = {
         "${var.prefix}laravel" = {
           readonly_root_filesystem = false
-          cpu                      = 512
-          memory                   = 1024
           essential                = true
           image                    = var.image_url
           port_mappings = [
@@ -27,11 +30,42 @@ module "ecs" {
               protocol      = "tcp"
             }
           ]
+          essential                 = true
           enable_cloudwatch_logging = true
-
+          mount_points = [
+            {
+              sourceVolume  = "vault-volume",
+              containerPath = "/etc/vault"
+            }
+          ]
+        }
+        "${var.prefix}vault" = {
+          readonly_root_filesystem  = false
+          essential                 = true
+          image                     = "${aws_ecr_repository.vault.repository_url}:latest"
+          essential                 = false
+          enable_cloudwatch_logging = true
+          command                   = ["vault", "agent", "-log-level", "debug", "-config=/etc/vault/vault-agent.hcl"]
+          dependsOn = [
+            {
+              containerName = "${var.prefix}laravel"
+              condition     = "START"
+            }
+          ],
+          mount_points = [
+            {
+              sourceVolume  = "vault-volume",
+              containerPath = "/etc/vault"
+            }
+          ],
+          environment = [
+            {
+              name  = "VAULT_ADDR"
+              value = hcp_vault_cluster.vault.vault_private_endpoint_url
+            }
+          ]
         }
       }
-
       load_balancer = {
         service = {
           target_group_arn = module.alb.target_group_arns[0]
