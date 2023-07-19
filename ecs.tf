@@ -20,7 +20,7 @@ module "ecs" {
         "${var.prefix}laravel" = {
           readonly_root_filesystem = false
           essential                = true
-          image                    = var.image_url
+          image                    = "${aws_ecr_repository.laravel.repository_url}:latest"
           port_mappings = [
             {
               containerPort = 8080
@@ -43,7 +43,7 @@ module "ecs" {
           ]
         }
         "${var.prefix}vault" = {
-          readonly_root_filesystem  = false
+          readonly_root_filesystem = false
           // normally should be true, but might not matter if just the httpd container is running
           essential                 = false
           image                     = "${aws_ecr_repository.vault.repository_url}:latest"

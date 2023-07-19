@@ -34,8 +34,8 @@ module "alb" {
       health_check = {
         enabled = true
         matcher = "200-499"
-        // we use the robots.txt of laravel for the healthcheck
-        path = var.image_url == "httpd:latest" ? "/" : "/robots.txt"
+        // we use the robots.txt of laravel for the healthcheck otherwise the load balancer will never redirect to the container
+        path = "/robots.txt"
       }
     },
   ]
