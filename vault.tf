@@ -1,3 +1,5 @@
+// secrets mount
+
 resource "vault_mount" "generic" {
   count       = var.vault_url != "" ? 1 : 0
   path        = "secret"
@@ -27,6 +29,8 @@ resource "vault_generic_secret" "laravel" {
 }
 EOT
 }
+
+// mysql mount
 
 resource "vault_mount" "rds" {
   count       = var.vault_url != "" ? 1 : 0
@@ -71,4 +75,88 @@ resource "vault_generic_endpoint" "rotate_initial_db_password_mysql" {
   disable_read   = true
   disable_delete = true
   data_json      = "{}"
+}
+
+# aws authentication backend, allows us to authenticate to vault with iam roles
+
+resource "aws_iam_user" "vault_user" {
+  name = "${var.prefix}vault-user"
+}
+
+resource "aws_iam_access_key" "vault_access_key" {
+  user = aws_iam_user.vault_user.name
+  lifecycle {
+    ignore_changes = [
+      # terraform vault provider rotates this directly after deploy so dont check state changes please
+      encrypted_secret,
+      key_fingerprint,
+      secret,
+      encrypted_ses_smtp_password_v4
+    ]
+  }
+}
+
+resource "aws_iam_policy" "vault_policy" {
+  name        = "${var.prefix}vault-policy"
+  description = "Policy for vault user to verify aws iam roles"
+  policy      = file("${path.module}/vault-policy.json")
+}
+
+resource "aws_iam_user_policy_attachment" "attach-policy-vault" {
+  user       = aws_iam_user.vault_user.name
+  policy_arn = aws_iam_policy.vault_policy.arn
+}
+
+resource "vault_auth_backend" "aws_auth" {
+  count       = var.vault_url != "" ? 1 : 0
+  type        = "aws"
+  description = "Auth via execution roles"
+  tune {
+    default_lease_ttl = "28800s"
+    max_lease_ttl     = "28800s"
+  }
+}
+
+resource "vault_aws_auth_backend_client" "aws_auth_client" {
+  count      = var.vault_url != "" ? 1 : 0
+  backend    = vault_auth_backend.aws_auth[0].path
+  access_key = aws_iam_access_key.vault_access_key.id
+  secret_key = aws_iam_access_key.vault_access_key.secret
+}
+
+
+resource "vault_aws_auth_backend_role" "laravelrole" {
+  count   = var.vault_url != "" ? 1 : 0
+  backend = vault_auth_backend.aws_auth[0].path
+  // needs to match what is in the vault configuration (this is NOT the AWS role but the vault role)
+  role      = "laravel"
+  auth_type = "iam"
+  token_policies = [
+    "read_all_secrets", "read_rds_credentials_laravel"
+  ]
+  bound_iam_principal_arns = [
+    // bind it to just these roles in aws
+    module.ecs.services["${var.prefix}laravel"]["tasks_iam_role_arn"],
+  ]
+  resolve_aws_unique_ids = false
+}
+
+// create the policies
+resource "vault_policy" "read_all_secrets" {
+  count  = var.vault_url != "" ? 1 : 0
+  name   = "read_all_secrets"
+  policy = <<EOT
+path "secret/*" {
+  capabilities = ["read", "list"]
+}
+EOT
+}
+
+resource "vault_policy" "read_rds_credentials_laravel" {
+  name   = "read_rds_credentials_laravel"
+  policy = <<EOT
+path "database/creds/laravel" {
+  capabilities = ["read"]
+}
+EOT
 }
