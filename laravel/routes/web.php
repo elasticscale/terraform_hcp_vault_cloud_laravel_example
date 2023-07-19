@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\DB;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,5 +15,11 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    // using the database directly, sue me
+    DB::table('cats')->insert([
+        'url' => 'https://cataas.com/cat/says/' . urlencode(date('Y-m-d H:i:s')),
+    ]);
+
+    $cats = App\Models\Cat::all()->sortByDesc('url');
+    return view('welcome', ['cats' => $cats]);
 });
