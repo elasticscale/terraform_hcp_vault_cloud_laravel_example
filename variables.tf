@@ -15,3 +15,9 @@ variable "image_url" {
   description = "Image URL to use for the container"
   type        = string
 }
+
+variable "vault_url" {
+  default     = ""
+  description = "URL to your Vault cluster, if you fill it in the Vault cluster will be provisioned"
+  type        = string
+}

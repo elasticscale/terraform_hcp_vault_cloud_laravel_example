@@ -31,3 +31,10 @@ resource "aws_route" "hcp_route" {
   destination_cidr_block    = hcp_hvn.hvn.cidr_block
   vpc_peering_connection_id = hcp_aws_network_peering.peer.provider_peering_id
 }
+
+resource "hcp_vault_cluster" "vault" {
+  cluster_id      = "${var.prefix}vault-cluster"
+  hvn_id          = hcp_hvn.hvn.hvn_id
+  tier            = "dev"
+  public_endpoint = true
+}

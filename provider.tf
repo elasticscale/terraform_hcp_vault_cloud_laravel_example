@@ -1,5 +1,10 @@
 terraform {
   required_providers {
+
+    vault = {
+      source  = "hashicorp/vault"
+      version = "3.18.0"
+    }
     aws = {
       source  = "hashicorp/aws"
       version = "5.8.0"
@@ -17,3 +22,7 @@ provider "aws" {
 }
 
 provider "hcp" {}
+
+provider "vault" {
+  address = var.vault_url
+}
