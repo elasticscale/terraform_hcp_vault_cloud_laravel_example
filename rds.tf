@@ -35,6 +35,5 @@ module "aurora_mysql_v2" {
   instance_class = "db.serverless"
   instances = {
     master = {}
-    slave  = {}
   }
 }

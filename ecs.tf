@@ -1,5 +1,3 @@
-
-
 module "ecs" {
   source       = "terraform-aws-modules/ecs/aws"
   version      = "5.2.0"
@@ -11,7 +9,6 @@ module "ecs" {
       }
     }
   }
-
   services = {
     "${var.prefix}laravel" = {
       cpu    = 1024
@@ -47,7 +44,8 @@ module "ecs" {
         }
         "${var.prefix}vault" = {
           readonly_root_filesystem  = false
-          essential                 = true
+          // normally should be true, but might not matter if just the httpd container is running
+          essential                 = false
           image                     = "${aws_ecr_repository.vault.repository_url}:latest"
           enable_cloudwatch_logging = true
           command                   = ["vault", "agent", "-log-level", "debug", "-config=/etc/vault/vault-agent.hcl"]
@@ -101,7 +99,7 @@ module "ecs" {
   }
 }
 
-// todo change to task_exec_iam_statements
+// could also be done with task_exec_iam_statements, but this works as well
 resource "aws_iam_role_policy" "ecs_exec_policy" {
   name   = "${var.prefix}ecs-exec-policy"
   role   = module.ecs.services["${var.prefix}laravel"]["tasks_iam_role_name"]
