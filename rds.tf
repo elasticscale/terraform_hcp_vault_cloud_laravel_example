@@ -3,6 +3,11 @@ resource "random_password" "password" {
   special = false
 }
 
+resource "aws_db_subnet_group" "default" {
+  name       = "${var.prefix}db-subnet-group"
+  subnet_ids = module.vpc.private_subnets
+}
+
 module "aurora_mysql_v2" {
   source                      = "terraform-aws-modules/rds-aurora/aws"
   version                     = "8.3.1"
@@ -15,7 +20,7 @@ module "aurora_mysql_v2" {
   master_username             = "root"
   master_password             = random_password.password.result
   vpc_id                      = module.vpc.vpc_id
-  db_subnet_group_name        = module.vpc.database_subnet_group_name
+  db_subnet_group_name        = aws_db_subnet_group.default.name
   database_name               = "db"
   security_group_rules = {
     vpc_ingress = {

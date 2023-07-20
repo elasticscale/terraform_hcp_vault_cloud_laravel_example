@@ -25,13 +25,10 @@ resource "hcp_aws_network_peering" "peer" {
 }
 
 resource "aws_route" "hcp_route" {
-  for_each = toset(concat(
-    module.vpc.private_route_table_ids,
-    module.vpc.public_route_table_ids,
-    module.vpc.intra_route_table_ids,
-    module.vpc.database_route_table_ids,
-    module.vpc.elasticache_route_table_ids,
-    module.vpc.redshift_route_table_ids,
+  // https://github.com/terraform-aws-modules/terraform-aws-vpc/pull/926
+  for_each = (merge(
+    zipmap(["a", "b", "c"], module.vpc.private_route_table_ids),
+    zipmap(["a"], module.vpc.public_route_table_ids),
   ))
   route_table_id            = each.value
   destination_cidr_block    = hcp_hvn.hvn.cidr_block

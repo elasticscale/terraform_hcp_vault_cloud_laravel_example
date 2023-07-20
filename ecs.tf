@@ -1,3 +1,6 @@
+data "aws_region" "current" {}
+data "aws_caller_identity" "current" {}
+
 module "ecs" {
   source       = "terraform-aws-modules/ecs/aws"
   version      = "5.2.0"
@@ -20,7 +23,7 @@ module "ecs" {
         "${var.prefix}laravel" = {
           readonly_root_filesystem = false
           essential                = true
-          image                    = "${aws_ecr_repository.laravel.repository_url}:latest"
+          image                    = "${data.aws_caller_identity.current.account_id}.dkr.ecr.${data.aws_region.current.name}.amazonaws.com/${var.prefix}laravel:latest"
           port_mappings = [
             {
               containerPort = 8080
@@ -46,7 +49,7 @@ module "ecs" {
           readonly_root_filesystem = false
           // normally should be true, but might not matter if just the httpd container is running
           essential                 = false
-          image                     = "${aws_ecr_repository.vault.repository_url}:latest"
+          image                     = "${data.aws_caller_identity.current.account_id}.dkr.ecr.${data.aws_region.current.name}.amazonaws.com/${var.prefix}vault:latest"
           enable_cloudwatch_logging = true
           command                   = ["vault", "agent", "-log-level", "debug", "-config=/etc/vault/vault-agent.hcl"]
           dependsOn = [
@@ -64,7 +67,7 @@ module "ecs" {
           environment = [
             {
               name  = "VAULT_ADDR"
-              value = hcp_vault_cluster.vault.vault_private_endpoint_url
+              value = var.vault_url
             }
           ]
         }
