@@ -1,15 +1,6 @@
 # this file is uncommented with a reason, it will only work if you have a vault server running and the vault_url variable set + VAULT_TOKEN environment variable
 # normally we would solve this with terragrunt modules that automatically provision vault, but that is out of scope for this demo
 
-# terraform {
-#   required_providers {
-#     vault = {
-#       source  = "hashicorp/vault"
-#       version = "3.18.0"
-#     }
-#   }
-# }
-
 # provider "vault" {
 #   address = var.vault_url
 # }

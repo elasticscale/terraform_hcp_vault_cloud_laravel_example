@@ -15,7 +15,7 @@ module "ecs" {
   services = {
     "${var.prefix}laravel" = {
       cpu    = 1024
-      memory = 4096
+      memory = 2048
       volume = [
         { name = "vault-volume" }
       ]
@@ -46,8 +46,7 @@ module "ecs" {
           ]
         }
         "${var.prefix}vault" = {
-          readonly_root_filesystem = false
-          // normally should be true, but might not matter if just the httpd container is running
+          readonly_root_filesystem = false          
           essential                 = false
           image                     = "${data.aws_caller_identity.current.account_id}.dkr.ecr.${data.aws_region.current.name}.amazonaws.com/${var.prefix}vault:latest"
           enable_cloudwatch_logging = true
