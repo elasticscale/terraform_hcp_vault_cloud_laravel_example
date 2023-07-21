@@ -67,6 +67,7 @@ module "ecs" {
           environment = [
             {
               name  = "VAULT_ADDR"
+              // hcp_vault_cluster.vault.vault_private_endpoint_url would be advisable but makes this infrastructure impossible to apply without terragrunt initially
               value = var.vault_url
             }
           ]

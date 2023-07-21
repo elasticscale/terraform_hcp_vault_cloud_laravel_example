@@ -1,4 +1,4 @@
-# this is uncommented with a reason, it will only work if you have a vault server running and the vault_url variable set + VAULT_TOKEN environment variable
+# this file is uncommented with a reason, it will only work if you have a vault server running and the vault_url variable set + VAULT_TOKEN environment variable
 # normally we would solve this with terragrunt modules that automatically provision vault, but that is out of scope for this demo
 
 # terraform {
