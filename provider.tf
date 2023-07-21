@@ -15,7 +15,7 @@ terraform {
   }
 }
 
-// this setup was tested with v1.5.3
+// this setup was tested with terraform v1.5.3
 provider "aws" {
   region = var.region
 }
