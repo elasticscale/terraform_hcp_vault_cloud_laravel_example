@@ -46,7 +46,7 @@ module "ecs" {
           ]
         }
         "${var.prefix}vault" = {
-          readonly_root_filesystem = false          
+          readonly_root_filesystem  = false
           essential                 = false
           image                     = "${data.aws_caller_identity.current.account_id}.dkr.ecr.${data.aws_region.current.name}.amazonaws.com/${var.prefix}vault:latest"
           enable_cloudwatch_logging = true
@@ -65,7 +65,7 @@ module "ecs" {
           ],
           environment = [
             {
-              name  = "VAULT_ADDR"
+              name = "VAULT_ADDR"
               // hcp_vault_cluster.vault.vault_private_endpoint_url would be advisable but makes this infrastructure impossible to apply without terragrunt initially
               value = var.vault_url
             }

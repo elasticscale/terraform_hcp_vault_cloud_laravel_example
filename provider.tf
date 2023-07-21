@@ -21,4 +21,3 @@ provider "aws" {
 }
 
 provider "hcp" {}
-
