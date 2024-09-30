@@ -4,20 +4,10 @@
 
 This is an example repository on how to integrate Laravel with Hashicorp Vault. Using AWS Fargate serverless Docker containers.
 
-[Checkout the full write-up on our blog.](https://elasticscale.cloud/en/running-laravel-on-hashicorp-vault-cloud-using-ecs-fargate/)
+[Checkout the full write-up on our blog.](https://elasticscale.com/en/running-laravel-on-hashicorp-vault-cloud-using-ecs-fargate/)
 
 ## About ElasticScale
 
-ElasticScale is a Solutions Architecture as a Service focusing on start-ups and scale-ups. For a fixed monthly subscription fee, we handle all your AWS workloads. Some services include:
-
-* Migrating **existing workloads** to AWS
-* Implementing the **Zero Trust security model**
-* Integrating **DevOps principles** within your organization
-* Moving to **infrastructure automation** (Terraform)
-* Complying with **ISO27001 regulations within AWS**
-
-You can **pause** the subscription at any time and have **direct access** to certified AWS professionals.
-
-Check out our <a href="https://elasticscale.cloud" target="_blank" style="color: #14dcc0; text-decoration: underline">website</a> for more information.
-
-<img src="https://static.elasticscale.io/logo/square/elasticscale_logo_transparent.png" alt="ElasticScale logo" width="150"/>
+Discover ES Foundation, the smart digital infrastructure for SaaS companies that want to grow and thrive.
+Check out our <a href="https://elasticscale.com" target="_blank" style="color: #FFB600; text-decoration: underline">website</a> for more information.
+<img src="https://static.elasticscale.io/email/banner.png" alt="ElasticScale banner" width="400"/>
