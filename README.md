@@ -10,4 +10,4 @@ This is an example repository on how to integrate Laravel with Hashicorp Vault. 
 
 Discover ES Foundation, the smart digital infrastructure for SaaS companies that want to grow and thrive.
 Check out our <a href="https://elasticscale.com" target="_blank" style="color: #FFB600; text-decoration: underline">website</a> for more information.
-<img src="https://static.elasticscale.io/email/banner.png" alt="ElasticScale banner" width="400"/>
+<img src="https://static.elasticscale.io/email/banner.png" alt="ElasticScale banner" width="100%"/>
