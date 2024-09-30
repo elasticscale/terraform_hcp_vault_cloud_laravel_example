@@ -4,7 +4,7 @@
 
 This is an example repository on how to integrate Laravel with Hashicorp Vault. Using AWS Fargate serverless Docker containers.
 
-[Checkout the full write-up on our blog.](https://elasticscale.com/en/running-laravel-on-hashicorp-vault-cloud-using-ecs-fargate/)
+[Checkout the full write-up on our blog.](https://elasticscale.com/running-laravel-on-hashicorp-vault-cloud-using-ecs-fargate/)
 
 ## About ElasticScale
 
